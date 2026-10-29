@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中醫輕養生 B2B2C｜AI 商業體質把脈系統</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; }
+    }
+    .option-card { transition: all 0.2s ease; }
+    .option-card.selected {
+      border-color: #1b4332;
+      background-color: #d8f3dc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-900 font-sans min-h-screen pb-16">
+
+  <!-- 頂部導覽列 -->
+  <header class="bg-emerald-950 text-amber-50 py-5 px-6 shadow-md sticky top-0 z-50 no-print">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>
+        <h1 class="text-xl font-bold tracking-wide">🌿 雲端輕養生 B2B2C｜AI 診所商業體質把脈系統</h1>
+        <p class="text-xs text-emerald-200 mt-0.5">黃金335模型：喉糖($399)×5盒/週 ＋ 茶包($299-$399)×2袋/天 ＋ 水藥($800-$1,500)×2人/週 ＝ 月創6萬零售額（批發3萬達標）</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="toggleView('survey')" id="btn-survey" class="px-3 py-1.5 bg-amber-500 text-emerald-950 font-bold rounded text-sm shadow">📋 12題互動問卷</button>
+        <button onclick="toggleView('cheatsheet')" id="btn-cheatsheet" class="px-3 py-1.5 bg-emerald-800 text-white rounded text-sm hover:bg-emerald-700">🛡️ A4作戰小抄</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 mt-6">
+
+    <!-- ==================== 視圖 1：12 題互動問卷與即時報告 ==================== -->
+    <div id="view-survey">
+      
+      <!-- 基本資訊列 -->
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">診所名稱 / 院長姓氏</label>
+            <input type="text" id="clinicName" value="陳院長" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-semibold focus:outline-none focus:border-emerald-700">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">現場遭遇情境（決定提問長度）</label>
+            <select id="visitScenario" onchange="applyScenarioFilter()" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-semibold bg-amber-50 focus:outline-none focus:border-emerald-700">
+              <option value="full">🟢 情境 C：離峰空檔 15 分鐘（完整 12 題顧問訪談）</option>
+              <option value="quick">🟡 情境 B：午休扒便當 3 分鐘（外場 Q1-Q4 ＋ 診間速問 Q5,Q6,Q7,Q12）</option>
+              <option value="blocked">🔴 情境 A：鐵壁櫃檯擋駕（僅填外場盲測 Q1-Q4 留企劃書）</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">預估日均看診人數</label>
+            <input type="number" id="dailyPatients" value="80" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-semibold focus:outline-none focus:border-emerald-700">
+          </div>
+        </div>
+      </div>
+
+      <!-- 問卷題目容器 -->
+      <div id="questions-container" class="space-y-6"></div>
+
+      <!-- 生成按鈕 -->
+      <div class="mt-8 text-center no-print">
+        <button onclick="generateDiagnosis()" class="w-full md:w-2/3 py-4 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-lg rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+          ⚡ 立即生成【診所專屬首季 +20% 獲利藍圖】與【AI Prompt】
+        </button>
+      </div>
+
+      <!-- 產出結果區 -->
+      <div id="result-section" class="hidden mt-8 space-y-6">
+        
+        <!-- 給院長看的即時診斷報告 -->
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-md border-2 border-emerald-900">
+          <div class="flex justify-between items-start border-b border-stone-200 pb-4 mb-5">
+            <div>
+              <span class="bg-emerald-100 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded">AI 商業體質把脈報告</span>
+              <h2 id="report-title" class="text-2xl font-bold text-emerald-950 mt-2"></h2>
+            </div>
+            <button onclick="copyElementText('report-content')" class="no-print px-3 py-1.5 bg-stone-800 text-white text-xs rounded hover:bg-stone-700">📋 複製報告傳 LINE</button>
+          </div>
+          <div id="report-content" class="space-y-5 text-stone-800 leading-relaxed"></div>
+        </div>
+
+        <!-- 後台 Mega-Prompt 複製區 -->
+        <div class="bg-stone-900 text-stone-100 p-6 rounded-2xl shadow-md no-print">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-bold text-amber-400">🤖 後台 LLM 超級指令（Mega-Prompt，可貼入 Gemini / ChatGPT 深化文案）</h3>
+            <button onclick="copyElementText('prompt-output')" class="px-3 py-1 bg-amber-500 text-stone-950 font-bold text-xs rounded hover:bg-amber-400">複製 Prompt</button>
+          </div>
+          <pre id="prompt-output" class="text-xs font-mono whitespace-pre-wrap bg-stone-950 p-4 rounded-lg border border-stone-700 text-stone-200 overflow-x-auto"></pre>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== 視圖 2：A4 隨身作戰小抄 ==================== -->
+    <div id="view-cheatsheet" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow border border-stone-300">
+      <div class="flex justify-between items-center border-b-2 border-emerald-900 pb-3 mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-emerald-950">🛡️ 中醫輕養生 B2B2C 業務實戰小抄（A4 雙面列印版）</h2>
+          <p class="text-xs text-stone-600">單店指標：月創零售 NT$60,000 ＝ 平台批發 NT$30,000（毛利30%）＝ 診所月增淨利 NT$50,000（首季獲利 +20%）</p>
+        </div>
+        <button onclick="window.print()" class="no-print px-4 py-2 bg-emerald-900 text-white text-xs font-bold rounded hover:bg-emerald-800">🖨️ 列印 A4 小抄</button>
+      </div>
+
+      <div class="space-y-4 text-xs leading-normal text-stone-900">
+        <div class="bg-amber-50 border border-amber-300 p-3 rounded-lg">
+          <strong class="text-emerald-950">📦 黃金 335 極簡達標公式（月銷僅 70 筆）：</strong>
+          ① <strong>喉糖/周邊 ($399)</strong>：每週賣 5 件（月銷 20 件＝$7,980）＋
+          ② <strong>養生茶包 ($299-$399/週)</strong>：每天賣 2 週份（月銷 50 週份＝$17,500）＋
+          ③ <strong>雲端機能水藥 ($800-$1,500/週)</strong>：每週僅轉化 2 人預訂 4 週療程（月銷 30 週份＝$34,500）➔ <strong>合計終端 $59,980（平台批發 $30,500 達標！）</strong>
+        </div>
+
+        <h3 class="font-bold text-sm text-emerald-900 border-l-4 border-emerald-800 pl-2">一、 四大院長個性「3 秒識人與應對頻道切換表」</h3>
+        <table class="w-full border-collapse border border-stone-300 text-left">
+          <thead class="bg-emerald-100 text-emerald-950">
+            <tr>
+              <th class="border border-stone-300 p-2 w-1/6">院長個性</th>
+              <th class="border border-stone-300 p-2 w-1/4">3 秒識人特徵</th>
+              <th class="border border-stone-300 p-2 w-1/5">❌ 踩雷禁語</th>
+              <th class="border border-stone-300 p-2">✅ 黃金破冰鉤子（投其所好）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-stone-300 p-2 font-bold">1. 清高學者型 [P1]</td>
+              <td class="border border-stone-300 p-2">放古書字畫、愛談醫理、慢條斯理</td>
+              <td class="border border-stone-300 p-2 text-red-700">賺大錢、衝業績、推銷、高毛利</td>
+              <td class="border border-stone-300 p-2">「傳統水藥一週兩千病患喝不起而中斷太可惜。我們用雲端萃取把您的處方壓到<strong>一週 $800-$1,500</strong>，讓患者無痛喝滿一個月看到神效，把銷售變成您的日常飲食醫囑。」</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="border border-stone-300 p-2 font-bold">2. 過勞厭倦型 [P2]</td>
+              <td class="border border-stone-300 p-2">候診爆滿、喝提神飲、看錶想休息</td>
+              <td class="border border-stone-300 p-2 text-red-700">要您拍片、多開診、跟病人多解釋</td>
+              <td class="border border-stone-300 p-2">「看一個健保客實收才 500 太委屈！把冷門下午改成 1 小時看 4 人的特診，<strong>每週只要挑 2 個熟客喝 $1,150 雲端水藥（工廠直接寄去他家）</strong>，抵過看 100 個感冒病人！」</td>
+            </tr>
+            <tr>
+              <td class="border border-stone-300 p-2 font-bold">3. 精明創業型 [P3]</td>
+              <td class="border border-stone-300 p-2">年輕院長、裝潢新、有推減重美顏針</td>
+              <td class="border border-stone-300 p-2 text-red-700">繞圈子不講重點、答不出毛利分潤</td>
+              <td class="border border-stone-300 p-2">「我們走 B2B2C 雲端藥局，<strong>診所零囤貨、護士免熬藥</strong>。櫃檯只放 20 袋 $299 茶包與 $399 喉糖破冰；病患回家掃外袋 QR Code 在 LINE 續訂水藥，總部代發，月底分潤 <strong>45%-50% 純利</strong>！」</td>
+            </tr>
+            <tr class="bg-stone-50">
+              <td class="border border-stone-300 p-2 font-bold">4. 溫暖仁醫型 [P4]</td>
+              <td class="border border-stone-300 p-2">跟長輩聊家常、心軟怕病人花大錢</td>
+              <td class="border border-stone-300 p-2 text-red-700">洗高價療程、拉高客單、淘汰健保客</td>
+              <td class="border border-stone-300 p-2">「年輕人喝手搖飲一週也要三四百，您叫他改喝您配的 <strong>$299 漢方消腫茶</strong>，一天才 40 塊卻顧
