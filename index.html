@@ -50,8 +50,8 @@
             <label class="block text-xs font-bold text-stone-600 mb-1">現場遭遇情境（決定提問長度）</label>
             <select id="visitScenario" onchange="applyScenarioFilter()" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-semibold bg-amber-50 focus:outline-none focus:border-emerald-700">
               <option value="full">🟢 情境 C：離峰空檔 15 分鐘（完整 12 題顧問訪談）</option>
-              <option value="quick">🟡 情境 B：午休扒便當 3 分鐘（外場 Q1-Q4 ＋ 診間速問 Q5,Q6,Q7,Q12）</option>
-              <option value="blocked">🔴 情境 A：鐵壁櫃檯擋駕（僅填外場盲測 Q1-Q4 留企劃書）</option>
+              <option value="quick">🟡 情境 B：午休扒便當 3 分鐘（外場 Q1-Q4 ＋ 診間速問）</option>
+              <option value="blocked">🔴 情境 A：鐵壁櫃檯擋駕（僅填外場盲測 Q1-Q4）</option>
             </select>
           </div>
           <div>
@@ -66,7 +66,7 @@
 
       <!-- 生成按鈕 -->
       <div class="mt-8 text-center no-print">
-        <button onclick="generateDiagnosis()" class="w-full md:w-2/3 py-4 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-lg rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+        <button onclick="generateDiagnosis()" class="w-full md:w-2/3 py-4 bg-emerald-900 hover:bg-emerald-800 text-amber-300 font-bold text-lg rounded-xl shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer">
           ⚡ 立即生成【診所專屬首季 +20% 獲利藍圖】與【AI Prompt】
         </button>
       </div>
@@ -149,4 +149,285 @@
               <td class="border border-stone-300 p-2 font-bold">4. 溫暖仁醫型 [P4]</td>
               <td class="border border-stone-300 p-2">跟長輩聊家常、心軟怕病人花大錢</td>
               <td class="border border-stone-300 p-2 text-red-700">洗高價療程、拉高客單、淘汰健保客</td>
-              <td class="border border-stone-300 p-2">「年輕人喝手搖飲一週也要三四百，您叫他改喝您配的 <strong>$299 漢方消腫茶</strong>，一天才 40 塊卻顧
+              <td class="border border-stone-300 p-2">「年輕人喝手搖飲一週也要三四百，您叫他改喝您配的 <strong>$299 漢方消腫茶</strong>，一天才 40 塊卻顧好身體；長輩捨不得花錢，我們用 LINE 讓孝順子女訂水藥寄回家！」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const questionsData = [
+      {
+        id: "Q1", stage: "外場偵查 (免問院長)", onlyQuick: true,
+        title: "Q1. 診所規模與門診熱度（目測候診區與班表）",
+        hook: "【業務觀察】看牆上醫師班表人數與候診區座位滿載度",
+        options: [
+          { tag: "S1_獨資冷清/新開業", label: "1位醫師，候診區空曠（主攻 $299 奉茶引流新客）" },
+          { tag: "S2_獨資穩定50-100人", label: "1位醫師，日均 50-100 人（主攻每週 2 人訂水藥加薪 20%）", default: true },
+          { tag: "S3_聯合爆滿過勞型", label: "2位以上醫師或爆滿（主攻雲端代發解放人力與以價制量）" }
+        ]
+      },
+      {
+        id: "Q2", stage: "外場偵查 (免問院長)", onlyQuick: true,
+        title: "Q2. 現有自費視覺盤點（目測櫃檯與海報）",
+        hook: "【業務觀察】櫃檯有無擺放自費品？牆面有無減重/水藥海報？",
+        options: [
+          { tag: "V1_純健保素顏型", label: "幾乎無自費陳列（推 $399 喉糖＋免費奉茶無痛破冰）", default: true },
+          { tag: "V2_傳統自費水藥型", label: "有貼三伏貼/傳統水藥公告（推 $800-$1,500 雲端水藥替換高價代煎）" },
+          { tag: "V3_現代醫美減重型", label: "有減重/美顏針精緻立牌（推院長冠名 $299 代謝茶搭售）" }
+        ]
+      },
+      {
+        id: "Q3", stage: "外場偵查 (免問院長)", onlyQuick: true,
+        title: "Q3. 櫃檯守門員（護理師/掛號小姐）屬性",
+        hook: "【櫃檯破冰話術】「姊，你們生意超好耶！光包健保藥粉就忙翻了，如果院長開水藥你們還要自己煎喔？」",
+        options: [
+          { tag: "N1_厭世忙碌型", label: "抱怨事多不想多事（報告強調：免熬藥＋每賣一袋給櫃檯 $20 獎金）", default: true },
+          { tag: "N2_熱情大姊型", label: "跟病患很熟愛聊天（導入三句話接球腳本，日銷 5 袋主力）" },
+          { tag: "N3_院長夫人坐鎮", label: "老闆娘本人坐鎮櫃檯（直接談零庫存風險＋50% 純利結算）" }
+        ]
+      },
+      {
+        id: "Q4", stage: "外場偵查 (免問院長)", onlyQuick: true,
+        title: "Q4. 診所數位漏斗現況（現場掃描 LINE）",
+        hook: "【業務觀察】進門前掃描診所 LINE 官方帳號與查看 Google 評論",
+        options: [
+          { tag: "D1_有LINE破千無商城", label: "LINE 好友破千但僅發休診公告（沉睡金礦，一推播即可變現）", default: true },
+          { tag: "D2_無LINE傳統型", label: "無官方 LINE（利用茶包外袋印製專屬 QR Code 無痛建立雲端商城）" }
+        ]
+      },
+      {
+        id: "Q5", stage: "診間對決 (核心鉤子)", onlyQuick: true,
+        title: "Q5. 院長個性快速定錨（決定系統報告與業務說話頻道）",
+        hook: "【進診間前 10 秒判斷】觀察院長眼神、語速與診間擺設（字畫古書 vs 現代數據）",
+        options: [
+          { tag: "P1_清高學者型", label: "清高學者型：愛惜羽毛、討厭推銷字眼、重視醫理與療效突破" },
+          { tag: "P2_過勞厭倦型", label: "過勞厭倦型：被健保綁架、滿臉疲態、渴望少點人但收入不減", default: true },
+          { tag: "P3_精明創業型", label: "精明創業型：重視坪效、毛利率、回本速度與零庫存風險" },
+          { tag: "P4_溫暖仁醫型", label: "溫暖仁醫型：把病患當家人、心軟怕病患花大錢、重視順口度" }
+        ]
+      },
+      {
+        id: "Q6", stage: "診間對決 (核心鉤子)", onlyQuick: true,
+        title: "Q6. 專長適應症鉤子（定錨院長冠名主打配方）",
+        hook: "🎣 話術：「院長，我們在幫診所設計『院長冠名配方』時發現，抓出兩個招牌賣最快。像您的熟客裡，是『睡不好、自律神經失調』的人多，還是『婦科經期、想消水腫減重』的女生比較多？」",
+        options: [
+          { tag: "M1_好眠疏肝系", label: "睡眠障礙 / 自律神經 / 慢性疲勞（配：$350舒眠茶＋$1,200安神水藥）", default: true },
+          { tag: "M2_婦兒氣血系", label: "調經備孕 / 產後修復 / 小兒抗敏轉骨（配：$350暖宮茶＋$1,200轉骨备孕水藥）" },
+          { tag: "M3_纖體代謝系", label: "體重管理 / 久坐水腫 / 便祕爆痘（配：$299洛神消腫茶＋$900燃脂水藥）" },
+          { tag: "M4_熟齡強筋系", label: "退化關節 / 換季咳喘 / 長輩保養（配：$399漢方潤喉糖＋$1,200強筋水藥）" }
+        ]
+      },
+      {
+        id: "Q7", stage: "診間對決 (核心鉤子)", onlyQuick: true,
+        title: "Q7. 「$800–$1,500/週 客製機能水藥」破冰鉤子",
+        hook: "🎣 話術：「傳統代煎水藥一週要兩千塊，病患常嫌貴中斷。如果我們用雲端代工把您的水藥處方壓到『一週只要 $800–$1,500（一天才一百多塊）』，直接幫您宅配到他家，您覺得每週從幾百個熟客挑出 2 到 3 個升級難不難？」",
+        options: [
+          { tag: "W1_極容易_每週5人以上", label: "熟客信任度極高，只要一週千元左右非常推得動（每週 5 人+）" },
+          { tag: "W2_穩健_每週2至3人", label: "不想強推，但針對久病熟客每週轉化 2–3 人很輕鬆（達標核心錨點）", default: true },
+          { tag: "W3_保守_先推百元茶包", label: "社區長輩居多，想先從 $299-$399 的茶包與喉糖建立習慣" }
+        ]
+      },
+      {
+        id: "Q8", stage: "診間對決 (完整訪談)", onlyQuick: false,
+        title: "Q8. 「$299–$399/週 茶包與喉糖」手搖飲替代鉤子",
+        hook: "🎣 話術：「您完全不用推銷！很多院長只跟病人說：『把買手搖飲的錢省下來，換成一週份 $299 的漢方消腫茶，一天才 40 塊。』如果候診區免費奉茶試喝，加上櫃檯擺 $399 漢方潤喉糖，您覺得病人最愛哪款？」",
+        options: [
+          { tag: "T1_洛神纖體茶_$299", label: "洛神纖體消腫茶 ($299/週) ＋ 院長特調潤喉糖 ($399)", default: true },
+          { tag: "T2_酸棗仁舒眠茶_$350", label: "酸棗仁晚安舒眠茶 ($350/週) ＋ 院長特調潤喉糖 ($399)" },
+          { tag: "T3_黃耆抗敏元氣茶_$350", label: "黃耆抗敏元氣茶 ($350/週) ＋ 院長特調潤喉糖 ($399)" }
+        ]
+      },
+      {
+        id: "Q9", stage: "診間對決 (完整訪談)", onlyQuick: false,
+        title: "Q9. 「離峰時段變現」預約特診鉤子",
+        hook: "🎣 話術：「您晚上跟週末忙翻了，但平日有沒有哪一兩個下午比較能喘口氣？我們很多院長把冷門下午改成『1 小時只看 4 人的 VIP 水藥調理預約診』，若挑一個下午試水溫，您選禮拜幾？」",
+        options: [
+          { tag: "R1_週二與週四下午特診", label: "選定平日 1-2 個冷門下午開設「VIP 深度水藥預約特診」", default: true },
+          { tag: "R2_門診全滿_走10秒快篩單", label: "早午晚皆滿，改走「診間處方勾選茶包/水藥代號 ➔ 櫃檯結帳」10秒快篩流" }
+        ]
+      },
+      {
+        id: "Q10", stage: "診間對決 (完整訪談)", onlyQuick: false,
+        title: "Q10. 「零庫存 B2B2C 自動續訂」安心鉤子",
+        hook: "🎣 話術：「以前推水藥最怕藥材過期跟護士熬藥翻臉。現在診所只放 20 袋首購現貨，病患喝完掃外袋 QR Code 在 LINE 訂整月水藥，總部直接宅配到他家、利潤照算診所的，這是不是幫您省掉一大半麻煩？」",
+        options: [
+          { tag: "C1_高度認同_消滅囤貨風險", label: "院長最怕囤貨過期，對「雲端一件代發」高度認同", default: true },
+          { tag: "C2_高度認同_解放護士人力", label: "院長最怕櫃檯抱怨，對「外袋掃碼自動續訂」高度認同" }
+        ]
+      },
+      {
+        id: "Q11", stage: "診間對決 (完整訪談)", onlyQuick: false,
+        title: "Q11. 「櫃檯小額分潤」激勵鉤子",
+        hook: "🎣 話術：「一盒 $399 喉糖或 $350 茶包，診所毛利近一半。如果從裡面撥 20 塊當櫃檯小姐的『順手推薦獎金』，她每天賣 4 袋一個月就多領三千塊，診所卻多賺好幾萬！您覺得外面的護士會不會動起來？」",
+        options: [
+          { tag: "I1_同意導入每袋$20獎金", label: "同意撥出小額獎金（茶包/喉糖抽 $20、水藥月方案抽 $150）激勵櫃檯", default: true },
+          { tag: "I2_傾向純靠奉茶立牌與醫囑", label: "不習慣發銷售獎金，傾向靠「候診奉茶立牌＋診間醫囑單」自然轉化" }
+        ]
+      },
+      {
+        id: "Q12", stage: "診間對決 (收網成交)", onlyQuick: true,
+        title: "Q12. 首季「月增 5 萬淨利（+20%）」拍板試飲鉤子",
+        hook: "🎣 話術：「AI 算出來了！只要『候診奉茶＋櫃檯每天 2 袋茶包/喉糖＋每週 2 人訂雲端水藥』，每月就多賺 5 萬淨利（+20%）。我下週二下午先免費送 3 款打樣好的茶包跟水藥給您跟護理長試喝味道，3 點半方便嗎？」",
+        options: [
+          { tag: "F1_約妥二訪_試飲舒眠與纖體組", label: "✅ 約妥下週二訪試飲（準備：舒眠茶＋洛神纖體茶＋安神水藥樣品）", default: true },
+          { tag: "F2_約妥二訪_試飲婦兒與強筋組", label: "✅ 約妥下週二訪試飲（準備：暖宮抗敏茶＋潤喉糖＋強筋水藥樣品）" },
+          { tag: "F3_先加LINE傳送完整報告", label: "📲 決策謹慎，先加院長個人 LINE 傳送本份 AI 診斷報告與分潤表" }
+        ]
+      }
+    ];
+
+    const selections = {};
+
+    function initSurvey() {
+      const container = document.getElementById('questions-container');
+      if (!container) return;
+      container.innerHTML = '';
+      questionsData.forEach(q => {
+        const defaultOpt = q.options.find(o => o.default) || q.options[0];
+        selections[q.id] = defaultOpt;
+
+        const card = document.createElement('div');
+        card.id = `card-${q.id}`;
+        card.className = "bg-white p-5 rounded-xl shadow-sm border border-stone-200 transition";
+        
+        let optionsHtml = q.options.map((opt, idx) => `
+          <div onclick="selectOption('${q.id}', ${idx})" id="opt-${q.id}-${idx}"
+               class="option-card cursor-pointer border rounded-lg p-3 text-sm ${opt.tag === defaultOpt.tag ? 'selected' : 'border-stone-200 hover:bg-stone-50'}">
+            <div class="text-xs text-emerald-800 font-mono mb-0.5">[${opt.tag}]</div>
+            <div class="text-stone-900">${opt.label}</div>
+          </div>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold px-2 py-0.5 rounded ${q.stage.includes('外場') ? 'bg-stone-200 text-stone-700' : 'bg-amber-100 text-amber-900'}">${q.stage}</span>
+          </div>
+          <h3 class="font-bold text-base text-emerald-950 mt-1">${q.title}</h3>
+          <p class="text-xs text-stone-600 bg-stone-50 p-2.5 rounded border-l-4 border-amber-500 my-2.5">${q.hook}</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3">
+            ${optionsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectOption(qId, optIdx) {
+      const q = questionsData.find(item => item.id === qId);
+      selections[qId] = q.options[optIdx];
+      q.options.forEach((_, idx) => {
+        const el = document.getElementById(`opt-${qId}-${idx}`);
+        if (el) {
+          if (idx === optIdx) el.classList.add('selected');
+          else el.classList.remove('selected');
+        }
+      });
+    }
+
+    function applyScenarioFilter() {
+      const mode = document.getElementById('visitScenario').value;
+      questionsData.forEach(q => {
+        const card = document.getElementById(`card-${q.id}`);
+        if (card) {
+          if (mode === 'full') {
+            card.style.display = 'block';
+          } else if (mode === 'quick') {
+            card.style.display = q.onlyQuick ? 'block' : 'none';
+          } else if (mode === 'blocked') {
+            card.style.display = q.stage.includes('外場') ? 'block' : 'none';
+          }
+        }
+      });
+    }
+
+    function toggleView(view) {
+      document.getElementById('view-survey').classList.toggle('hidden', view !== 'survey');
+      document.getElementById('view-cheatsheet').classList.toggle('hidden', view !== 'cheatsheet');
+    }
+
+    function generateDiagnosis() {
+      const name = document.getElementById('clinicName').value || '院長';
+      const daily = parseInt(document.getElementById('dailyPatients').value) || 80;
+      const monthlyVisits = daily * 25;
+
+      const mTag = selections.Q6 ? selections.Q6.tag : "M1";
+      let teaName = "晚安酸棗仁舒眠漢方茶 ($350/週)";
+      let decoctionName = "深度好眠疏肝濃縮水藥 ($1,150/週)";
+      if (mTag.includes("M2")) {
+        teaName = "玫瑰暖宮氣血養生茶 ($350/週)";
+        decoctionName = "黃金備孕/轉骨開脾濃縮水藥 ($1,200/週)";
+      } else if (mTag.includes("M3")) {
+        teaName = "纖體洛神消腫順暢茶 ($299/週)";
+        decoctionName = "燃脂代謝埋線輔助水藥 ($950/週)";
+      } else if (mTag.includes("M4")) {
+        teaName = "潤肺生津羅漢果養生茶 ($350/週)";
+        decoctionName = "龜鹿強筋健步濃縮水藥 ($1,200/週)";
+      }
+
+      document.getElementById('report-title').innerText = `${name}專屬：社區預約制輕養生轉型暨首季 +20% 獲利藍圖`;
+      
+      const reportHtml = `
+        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+          <h4 class="font-bold text-emerald-950 mb-1">一、 診所商業基因診斷與破口</h4>
+          <p class="text-sm">以貴診所目前月均約 ${monthlyVisits} 人次的流量池，導入「零庫存、免熬煮」的 B2B2C 雲端共享藥局，能在零邊際成本下將客單價放大 20% 以上。</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-emerald-950 mb-2">二、 ${name}冠名主打：三階黃金產品漏斗</h4>
+          <ul class="list-disc pl-5 text-sm space-y-1">
+            <li><strong>【第一階：櫃檯秒殺破冰磚】院長特調・漢方草本潤喉糖（NT$ 399/盒）</strong></li>
+            <li><strong>【第二階：日常高頻回購網】${name}特調・${teaName}</strong></li>
+            <li><strong>【第三階：預約特診獲利王】${name}處方・${decoctionName}</strong></li>
+          </ul>
+        </div>
+
+        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+          <h4 class="font-bold text-emerald-950 mb-2">三、 首季獲利 +20%「335 極簡達標算數」</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+            <div class="bg-white p-3 rounded-lg border border-amber-300">
+              <div class="text-xs text-stone-500">① 櫃檯順手帶 ($399 喉糖)</div>
+              <div class="text-lg font-bold text-emerald-900 my-1">每週僅需 5 盒</div>
+              <div class="text-xs text-stone-700">月銷 20 盒 ＝ <strong>NT$ 7,980</strong></div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-amber-300">
+              <div class="text-xs text-stone-500">② 日常喝水保養 ($350 茶包)</div>
+              <div class="text-lg font-bold text-emerald-900 my-1">每天僅需 2 袋</div>
+              <div class="text-xs text-stone-700">月銷 50 袋 ＝ <strong>NT$ 17,500</strong></div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-amber-300">
+              <div class="text-xs text-stone-500">③ 特診深度調理 ($1,150 水藥)</div>
+              <div class="text-lg font-bold text-emerald-900 my-1">每週僅轉化 2 人</div>
+              <div class="text-xs text-stone-700">月訂 4 週(30組) ＝ <strong>NT$ 34,500</strong></div>
+            </div>
+          </div>
+          <p class="text-sm font-bold text-emerald-950 mt-3 text-center">
+            👉 月度合計創造 NT$ 59,980 終端營收（診所零庫存淨賺約 3 萬商品分潤＋2 萬特診診察費，獲利 +20%！）
+          </p>
+        </div>
+      `;
+
+      document.getElementById('report-content').innerHTML = reportHtml;
+      document.getElementById('prompt-output').innerText = `# Role\n請針對 ${name} 產生行銷文案。`;
+      
+      const resSection = document.getElementById('result-section');
+      resSection.classList.remove('hidden');
+      resSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyElementText(elId) {
+      const text = document.getElementById(elId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ 已成功複製到剪貼簿！');
+      });
+    }
+
+    window.onload = function() {
+      initSurvey();
+    };
+  </script>
+</body>
+</html>
