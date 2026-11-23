@@ -16,6 +16,12 @@
       background-color: #f0fdf4;
       font-weight: 600;
     }
+    .option-card.disinterest.selected {
+      border-color: #b91c1c;
+      background-color: #fef2f2;
+      color: #7f1d1d;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body class="bg-stone-100 text-stone-900 font-sans min-h-screen pb-16">
@@ -164,9 +170,6 @@
   </main>
 
   <script>
-    // ==========================================
-    // 請將下方引號內換成您自己的 Google Apps Script 網址
-    // ==========================================
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZaeDMvMVS6OkR2LDNiG6QqHJxqgIcNZ112MGu8hciE5ACY74M7MsH4R4o7bEjJvWk/exec";
 
     const questionsData = [
@@ -227,7 +230,8 @@
         options: [
           { tag: "M1_睡眠安神與去濕系", label: "正伍皓安神助眠與去濕茶包（配：桃膠飲 ＋ 睡眠水藥）", default: true },
           { tag: "M2_亞健康慢性疲勞系", label: "正伍皓補氣潤肺與元氣茶包（配：喉糖 ＋ 調理水藥）" },
-          { tag: "M3_四季節氣對應調理", label: "依 24 節氣自動切換茶包組合（配：艾草包 ＋ 季節水藥）" }
+          { tag: "M3_四季節氣對應調理", label: "依 24 節氣自動切換茶包組合（配：艾草包 ＋ 季節水藥）" },
+          { tag: "X6_對IP與冠名無感", label: "⚠️ 院長興趣缺缺：對個人 IP、短影音或冠名茶包無感／無意願", disinterest: true }
         ]
       },
       {
@@ -237,7 +241,8 @@
         options: [
           { tag: "W1_極容易_每週5人以上", label: "熟客信任度極高，高單價水藥療程接受度高（每週 5 人+）" },
           { tag: "W2_穩健_每週2至3人", label: "針對亞健康熟客，每週轉化 2–3 人很輕鬆（達標核心錨點）", default: true },
-          { tag: "W3_保守_先推正伍皓茶包", label: "先從 $140 桃膠飲、$220 喉糖與 $390 正伍皓茶包建立習慣" }
+          { tag: "W3_保守_先推正伍皓茶包", label: "先從 $140 桃膠飲、$220 喉糖與 $390 正伍皓茶包建立習慣" },
+          { tag: "X7_水藥接受度低/抗拒", label: "⚠️ 院長興趣缺缺：對水藥方案興趣缺缺或排斥自費水藥", disinterest: true }
         ]
       },
       {
@@ -246,7 +251,8 @@
         hook: "🎣 話術：「把買手搖飲的錢省下來，改喝一盒 $390 的正伍皓節氣功能茶包。加上櫃檯擺喉糖與桃膠飲，病人反應極佳！」",
         options: [
           { tag: "T1_正伍皓茶包_$390", label: "正伍皓 24 節氣功能茶包 ($390/盒) ＋ 桃膠飲 ($140) ＋ 喉糖 ($220)", default: true },
-          { tag: "T2_去濕潤肺茶包組合", label: "正伍皓去濕潤肺茶包 ($390/盒) ＋ 艾草防蚊包 ($240) ＋ 喉糖 ($220)" }
+          { tag: "T2_去濕潤肺茶包組合", label: "正伍皓去濕潤肺茶包 ($390/盒) ＋ 艾草防蚊包 ($240) ＋ 喉糖 ($220)" },
+          { tag: "X8_茶包與小物無意願", label: "⚠️ 院長興趣缺缺：對 $399 茶包或桃膠／喉糖／艾草包無意願", disinterest: true }
         ]
       },
       {
@@ -255,7 +261,8 @@
         hook: "🎣 話術：「平日有沒有哪一兩個下午比較能喘口氣？我們很多院長把冷門下午改成『1 小時只看 4 人的 VIP 水藥調理預約診』！」",
         options: [
           { tag: "R1_週二與週四下午特診", label: "選定平日 1-2 個冷門下午開設「VIP 深度水藥預約特診」", default: true },
-          { tag: "R2_門診全滿_走10秒快篩單", label: "早午晚皆滿，改走「診間處方勾選茶包/水藥代號 ➔ 櫃檯結帳」10秒快篩流" }
+          { tag: "R2_門診全滿_走10秒快篩單", label: "早午晚皆滿，改走「診間處方勾選茶包/水藥代號 ➔ 櫃檯結帳」10秒快篩流" },
+          { tag: "X9_無離峰或排斥特診", label: "⚠️ 院長興趣缺缺：無離峰時段或排斥預約特診／快篩流程", disinterest: true }
         ]
       },
       {
@@ -263,7 +270,8 @@
         title: "Q10. 「零庫存 B2B2C 自動續訂」安心鉤子",
         hook: "🎣 話術：「診所只放少量首購現貨，病患喝完掃外袋 QR Code 在 LINE 訂整月正伍皓茶包與水藥，總部直接宅配到家、利潤照算診所的！」",
         options: [
-          { tag: "C1_高度認同_雲端一件代發", label: "院長最怕麻煩，對「總部無菌代工、雲端一件代發」高度認同", default: true }
+          { tag: "C1_高度認同_雲端一件代發", label: "院長最怕麻煩，對「總部無菌代工、雲端一件代發」高度認同", default: true },
+          { tag: "X10_對雲端代發有疑慮/無感", label: "⚠️ 院長興趣缺缺：對雲端一件代發或 QR Code 續訂無感／有疑慮", disinterest: true }
         ]
       },
       {
@@ -272,7 +280,8 @@
         hook: "🎣 話術：「從毛利中撥出小額當護理師的順手推薦獎金，讓護理團隊主動動起來！」",
         options: [
           { tag: "I1_同意導入小額推薦獎金", label: "同意撥出小額獎金（小物抽 $15、茶包抽 $30、水藥月方案抽 $150）激勵櫃檯", default: true },
-          { tag: "I2_傾向純靠展示架與醫囑", label: "不習慣發銷售獎金，傾向靠「櫃檯展示架＋醫囑單」自然轉化" }
+          { tag: "I2_傾向純靠展示架與醫囑", label: "不習慣發銷售獎金，傾向靠「櫃檯展示架＋醫囑單」自然轉化" },
+          { tag: "X11_不認同或不便推動分潤", label: "⚠️ 院長興趣缺缺：不認同或院內不便推動櫃檯推薦獎金", disinterest: true }
         ]
       },
       {
@@ -282,7 +291,8 @@
         options: [
           { tag: "F1_約妥二訪_試飲正伍皓與桃膠組", label: "✅ 約妥下週二訪試飲（準備：正伍皓睡眠茶包＋桃膠飲＋IP案例，預設）", default: true },
           { tag: "F2_約妥二訪_試飲去濕與艾草組", label: "✅ 約妥下週二訪試飲（準備：正伍皓去濕茶包＋艾草包＋IP案例）" },
-          { tag: "F3_先加LINE傳送完整報告", label: "📲 決策謹慎，先加院長個人 LINE 傳送本份 AI 診斷報告與短影音企劃" }
+          { tag: "F3_先加LINE傳送完整報告", label: "📲 決策謹慎，先加院長個人 LINE 傳送本份 AI 診斷報告與短影音企劃" },
+          { tag: "X12_明確婉拒二訪/興趣缺缺", label: "⚠️ 院長興趣缺缺：明確婉拒二訪或暫無合作意願", disinterest: true }
         ]
       }
     ];
@@ -301,13 +311,17 @@
         card.id = `card-${q.id}`;
         card.className = "bg-white p-5 rounded-xl shadow-sm border border-stone-200 transition";
         
-        let optionsHtml = q.options.map((opt, idx) => `
-          <div onclick="selectOption('${q.id}', ${idx})" id="opt-${q.id}-${idx}"
-               class="option-card cursor-pointer border rounded-lg p-3 text-sm ${opt.tag === defaultOpt.tag ? 'selected' : 'border-stone-200 hover:bg-stone-50'}">
-            <div class="text-xs text-emerald-800 font-mono mb-0.5">[${opt.tag}]</div>
-            <div class="text-stone-900">${opt.label}</div>
-          </div>
-        `).join('');
+        let optionsHtml = q.options.map((opt, idx) => {
+          const disinterestClass = opt.disinterest ? "disinterest border-red-200 bg-red-50/40 hover:bg-red-50" : "border-stone-200 hover:bg-stone-50";
+          const tagColor = opt.disinterest ? "text-red-700" : "text-emerald-800";
+          return `
+            <div onclick="selectOption('${q.id}', ${idx})" id="opt-${q.id}-${idx}"
+                 class="option-card cursor-pointer border rounded-lg p-3 text-sm ${disinterestClass} ${opt.tag === defaultOpt.tag ? 'selected' : ''}">
+              <div class="text-xs ${tagColor} font-mono mb-0.5">[${opt.tag}]</div>
+              <div class="text-stone-900">${opt.label}</div>
+            </div>
+          `;
+        }).join('');
 
         card.innerHTML = `
           <div class="flex justify-between items-center mb-1">
@@ -315,7 +329,7 @@
           </div>
           <h3 class="font-bold text-base text-emerald-950 mt-1">${q.title}</h3>
           <p class="text-xs text-stone-600 bg-stone-50 p-2.5 rounded border-l-4 border-amber-500 my-2.5">${q.hook}</p>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-3">
             ${optionsHtml}
           </div>
         `;
@@ -362,6 +376,10 @@
       const scenario = document.getElementById('visitScenario').value;
       const monthlyVisits = daily * 25;
 
+      const disinterestList = ["Q6", "Q7", "Q8", "Q9", "Q10", "Q11", "Q12"]
+        .filter(qId => selections[qId] && selections[qId].disinterest)
+        .map(qId => `${qId}（${selections[qId].tag}）`);
+
       if (WEB_APP_URL && WEB_APP_URL.includes("script.google.com")) {
         const payload = {
           clinicName: name, scenario: scenario, dailyPatients: daily,
@@ -380,8 +398,16 @@
       }
 
       document.getElementById('report-title').innerText = `${name}專屬：正伍皓大健康合夥人暨 IP 賦能獲利藍圖`;
+
+      const resistanceBanner = disinterestList.length > 0
+        ? `<div class="bg-red-50 p-4 rounded-xl border border-red-200 text-red-900">
+             <h4 class="font-bold mb-1">⚠️ 現場興趣缺缺／抗拒節點提醒（供主管分析與二訪策略調整）</h4>
+             <p class="text-sm">本次拜訪於 <strong>${disinterestList.join("、")}</strong> 出現院長興趣缺缺或婉拒訊號。建議在試算表「R 欄備註」補充具體原因，並對照院長個性（Q5）與診所規模（Q1/Q2）調整切入順序。</p>
+           </div>`
+        : "";
       
       const reportHtml = `
+        ${resistanceBanner}
         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
           <h4 class="font-bold text-emerald-950 mb-1">一、 診所商業基因診斷與 IP 戰略定位</h4>
           <p class="text-sm">以貴診所日均約 ${monthlyVisits} 人次的流量池，我們不以「賣貨廠商」切入，而是作為您的<strong>「醫療商業合夥人與預防醫學後勤」</strong>。透過量身打造<strong>「院長冠名專屬茶包/美顏飲」</strong>與<strong>「總部短影音 IP 賦能」</strong>，助您在零庫存壓力下大幅拉高社區影響力與自費客單！</p>
@@ -422,7 +448,7 @@
       `;
 
       document.getElementById('report-content').innerHTML = reportHtml;
-      document.getElementById('prompt-output').innerText = `# Role\n請針對 ${name} 產生正伍皓大健康合夥人與短影音 IP 賦能行銷文案。`;
+      document.getElementById('prompt-output').innerText = `# Role\n請針對 ${name}（拜訪情境：${scenario}，日均看診：${daily}人）產生正伍皓大健康合夥人與短影音 IP 賦能行銷文案。\n# 問卷結果\nQ1:${selections.Q1?.tag} | Q2:${selections.Q2?.tag} | Q3:${selections.Q3?.tag} | Q4:${selections.Q4?.tag}\nQ5:${selections.Q5?.tag} | Q6:${selections.Q6?.tag} | Q7:${selections.Q7?.tag} | Q8:${selections.Q8?.tag}\nQ9:${selections.Q9?.tag} | Q10:${selections.Q10?.tag} | Q11:${selections.Q11?.tag} | Q12:${selections.Q12?.tag}`;
       
       const resSection = document.getElementById('result-section');
       resSection.classList.remove('hidden');
